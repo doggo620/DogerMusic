@@ -5,6 +5,7 @@
 #include <Windows.h>
 
 dUI::UIManager& dUI::UIManager::Instance() {
+	SetConsoleOutputCP(CP_UTF8);
 	static UIManager instance;
 	return instance;
 }
@@ -22,6 +23,28 @@ void dUI::UIManager::addAnimation(std::shared_ptr<dUI::Animation> animation) {
 void dUI::UIManager::print(dUI::cords cd, std::string text) {
 	SetConsoleCursorPosition(hStdout, { (SHORT)cd.x, (SHORT)cd.y });
 	std::cout << text;
+}
+
+void dUI::UIManager::divideX(dUI::cords c, char t) {
+	SetConsoleCursorPosition(hStdout, { 0, (SHORT)c.y });
+	cords pos = dUI::UIManager::Instance().getSize();
+	for (int i = 0; i < pos.x; i++) {
+		std::cout << t;
+	}
+}
+
+void dUI::UIManager::setTitle(LPCSTR t){
+	SetConsoleTitleA(t);
+}
+
+dUI::cords dUI::UIManager::getSize(){
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	int columns, rows;
+	cords c;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	c.x = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	c.y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+	return c;
 }
 
 dUI::Button::Button(std::string txt, dUI::cords c, std::function<void()> ac)

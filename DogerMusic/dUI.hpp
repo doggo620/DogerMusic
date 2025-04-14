@@ -38,6 +38,9 @@ namespace dUI {
 		void addButton(std::shared_ptr<Button>);
 		void addAnimables(std::shared_ptr<Animable>);
 		void addAnimation(std::shared_ptr<Animation>);
-		void print(cords cd, std::string);
+		void print(cords, std::string);
+		void divideX(cords, char);
+		void setTitle(LPCSTR);
+		cords getSize();
 	};
 }
