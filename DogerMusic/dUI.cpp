@@ -49,11 +49,20 @@ void dUI::UIManager::print(dUI::cords cd, std::string text) {
 	std::cout << text;
 }
 
-void dUI::UIManager::divideX(dUI::cords c, char t) {
-	SetConsoleCursorPosition(hStdout, { 0, (SHORT)c.y });
-	cords pos = dUI::UIManager::Instance().getSize();
-	for (int i = 0; i < pos.x; i++) {
-		std::cout << t;
+void dUI::UIManager::divide(dUI::cords c1, dUI::cords c2, std::string t) {
+	if (c1.y == c2.y) {
+		SetConsoleCursorPosition(hStdout, { (SHORT)c1.x, (SHORT)c1.y });
+		for (int i = 0; i < c2.x - c1.x; i++) {
+			std::cout << t;
+		}
+	}
+	else {
+		//if (c1.x != c2.x) return;
+		for (int i = c1.y; i < c2.y; i++) {
+			SetConsoleCursorPosition(hStdout, { (SHORT)c1.x, (SHORT)i});
+			std::cout << t;
+		}
+
 	}
 }
 

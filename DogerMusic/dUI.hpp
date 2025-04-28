@@ -29,6 +29,9 @@ namespace dUI {
 	public:
 		Animable(std::string, dUI::cords, std::function<void()>);
 	};
+
+
+
 	class Animation;
 	class UIManager {
 	private:
@@ -52,7 +55,7 @@ namespace dUI {
 		void addAnimables(std::shared_ptr<Animable>);
 		void addAnimation(std::shared_ptr<Animation>);
 		void print(cords, std::string);
-		void divideX(cords, char);
+		void divide(cords, cords, std::string);
 		void setTitle(LPCSTR);
 		void events();
 		void render();

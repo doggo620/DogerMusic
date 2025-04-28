@@ -12,8 +12,11 @@ int main()
 	window.print({(window.getSize().x / 2) - 5, 0}, u8"❥🔥PinkMusic <3");
 	window.print({ (window.getSize().x ) - 13, 0 }, u8"🦅Version Uno");
 	window.print({0, 0 }, u8"🍻Made by Doggo");
-	window.divideX({ 0, 1 }, '%');
-	window.divideX({ 0, window.getSize().y - 2 }, '%');
+	window.divide({ 0, 1 }, { window.getSize().x/2, 1}, u8"💜");
+	window.divide({ 0, window.getSize().y - 2 }, { window.getSize().x / 2, window.getSize().y - 2 }, u8"💜");
+
+	window.divide({ 0, 1 }, { 0,  window.getSize().y - 1}, u8"💜");
+	window.divide({ window.getSize().x - 2 , 1 }, { 0,  window.getSize().y - 1}, u8"💜");
 
 	//buttons
 	std::shared_ptr<dUI::Button> backButton;
@@ -41,8 +44,15 @@ int main()
 		});
 	skipButton->length = 2;
 
+	int frame = 0;
 
 	while(true){
+		window.print({ 10,10 }, std::to_string(frame));
+		window.print({ 10,11 }, std::to_string(window.frameTime));
+
+		window.print({ 20,20 }, std::to_string(frame));
+
+		frame++;
 		window.render();
 	}
 	return 0;
