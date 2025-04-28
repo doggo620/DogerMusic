@@ -131,6 +131,9 @@
     <ClCompile Include="dUI.cpp" />
     <ClCompile Include="dUI.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dPlayer.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
