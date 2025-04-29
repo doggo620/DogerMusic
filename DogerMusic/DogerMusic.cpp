@@ -8,6 +8,13 @@ int main()
 
 	window.setTitle("PinkMusic");
 
+	std::string timestamp = u8"0 : 0 0";
+	window.print({ 10,window.getSize().y - 1 }, timestamp);
+	dUI::slider musicSlider = dUI::slider({ 19,window.getSize().y - 1 }, { 84, window.getSize().y - 1 }, u8"🩷", "#");//79
+	musicSlider.setAction([&timestamp, &musicSlider, &window]() {
+
+		});
+	window.addSlider(std::make_shared<dUI::slider>(musicSlider));
 
 	window.print({(window.getSize().x / 2) - 5, 0}, u8"❥🔥PinkMusic <3");
 	window.print({ (window.getSize().x ) - 13, 0 }, u8"🦅Version Uno");
@@ -40,9 +47,22 @@ int main()
 
 	std::shared_ptr<dUI::Button> skipButton;
 	skipButton = dUI::Button::Create(u8"⏭", dUI::cords{ 4, window.getSize().y - 1 }, [&skipButton]() {
-		
 		});
 	skipButton->length = 2;
+
+	std::shared_ptr<dUI::Button> shufleButton;
+	shufleButton = dUI::Button::Create(u8"➡️", dUI::cords{ 6, window.getSize().y - 1 }, [&shufleButton]() {
+		static bool isShuffling = false;
+		if (isShuffling) {
+			shufleButton->text = u8"🔀";
+		}
+		else {
+			shufleButton->text = u8"➡️";
+		}
+		isShuffling = !isShuffling;
+		shufleButton->toRender = true;
+		});
+	shufleButton->length = 2;
 
 	int frame = 0;
 
@@ -51,7 +71,6 @@ int main()
 		window.print({ 10,11 }, std::to_string(window.frameTime));
 
 		window.print({ 20,20 }, std::to_string(frame));
-
 		frame++;
 		window.render();
 	}

@@ -37,6 +37,10 @@ dUI::UIManager::UIManager()
 void dUI::UIManager::addButton(std::shared_ptr<dUI::Button> button) {
 	buttons.push_back(button);
 }
+void dUI::UIManager::addSlider(std::shared_ptr<slider> sl){
+	sliders.push_back(sl);
+	sl->update();
+}
 void dUI::UIManager::addAnimables(std::shared_ptr<dUI::Animable> animable) {
 	animables.push_back(animable);
 }
@@ -77,6 +81,28 @@ void dUI::UIManager::events(){
 			switch (InputRecord.EventType) {
 			case MOUSE_EVENT:
 				if (InputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+
+					for (auto& slider : sliders) {
+						if (slider->dragging) {
+							if (InputRecord.Event.MouseEvent.dwMousePosition.X >= slider->c1.x &&
+								InputRecord.Event.MouseEvent.dwMousePosition.X < slider->c2.x) {
+								int x = InputRecord.Event.MouseEvent.dwMousePosition.X - slider->c1.x;
+								slider->draw(x);
+								slider->progress = x;
+							}
+							else if (InputRecord.Event.MouseEvent.dwMousePosition.X > slider->c2.x) {
+								int x = slider->c2.x - slider->c1.x;
+								slider->draw(x);
+								slider->progress = x;
+							}
+							else if (InputRecord.Event.MouseEvent.dwMousePosition.X < slider->c1.x) {
+								int x = 0;
+								slider->draw(x);
+								slider->progress = x;
+							}
+						}
+					}
+
 					if (canClick) {
 						for (auto& button : buttons) {
 							if (InputRecord.Event.MouseEvent.dwMousePosition.X >= button->cords.x &&
@@ -86,9 +112,28 @@ void dUI::UIManager::events(){
 								canClick = false;
 							}
 						}
+						for (auto& slider : sliders) {
+							if (InputRecord.Event.MouseEvent.dwMousePosition.X >= slider->c1.x &&
+								InputRecord.Event.MouseEvent.dwMousePosition.X < slider->c2.x && //button->text.length()
+								InputRecord.Event.MouseEvent.dwMousePosition.Y == slider->c1.y) {
+								//button->Action();
+								slider->dragging = true;
+								canClick = false;
+							}
+						}
 					}
 				}
 				else if (InputRecord.Event.MouseEvent.dwButtonState == 0) {
+					for (auto& slider : sliders) {
+						if (slider->dragging) {
+							slider->dragging = false;
+							if (slider->Action != NULL) {
+								slider->Action();
+							}
+						}
+					}
+
+
 					canClick = true;
 				}
 				break;
@@ -142,7 +187,75 @@ void dUI::UIManager::render(){
 			print(button->cords, button->text);
 		}
 	}
-	std::cout.flush();
+	//std::cout.flush();
 
 	time(&lastFrame);
+}
+
+dUI::slider::slider(cords cc1, cords cc2, std::string poi, std::string cha){
+	c1 = cc1;
+	c2 = cc2;
+	ch = cha;
+	pointer = poi;
+}
+
+void dUI::slider::setAction(std::function<void()> an){
+	Action = an;
+}
+
+void dUI::slider::update() {
+	auto ins = dUI::UIManager::Instance();
+	SetConsoleCursorPosition(ins.hStdout, { (SHORT)c1.x, (SHORT)c1.y });
+
+	for (int i = 0; i < c2.x - c1.x; i++) {
+		if (i == progress) { //c1.x +
+			std::cout << pointer;
+		}
+		else if (i < progress) {
+			std::cout << ch;
+		}
+		else if (i > progress) {
+			std::cout << "-";
+		}
+	}
+}
+
+void dUI::slider::draw(int newPosX){
+	auto ins = dUI::UIManager::Instance();
+
+	bool RIGHT = (progress - newPosX)<0;
+	short distance = std::abs(progress - newPosX);
+
+	if (RIGHT) {
+		SetConsoleCursorPosition(ins.hStdout, { (SHORT)(c1.x+progress), (SHORT)c1.y });
+		for (int i = progress; i <= progress + distance; i++) {
+			if (i == newPosX) { //c1.x +
+				std::cout << pointer;
+			}
+			else if (i < newPosX) {
+				std::cout << ch;
+			}
+		}
+	}
+	else {
+		SetConsoleCursorPosition(ins.hStdout, { (SHORT)(c1.x+newPosX), (SHORT)c1.y });
+		for (int i = newPosX; i <= newPosX + distance; i++) {
+			if (i == newPosX) { //c1.x +
+				std::cout << pointer;
+			}
+			else if (i > newPosX) {
+				std::cout << "-";
+			}
+		}
+	}
+}
+
+dUI::movingText::movingText(cords cc, cords ccc, std::string tx){
+	c1 = cc;
+	c2 = ccc;
+	originalText = tx;
+}
+
+void dUI::movingText::render(){
+	dUI::UIManager::Instance().print(c1, text);
 }

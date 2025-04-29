@@ -30,7 +30,39 @@ namespace dUI {
 		Animable(std::string, dUI::cords, std::function<void()>);
 	};
 
+	class movingText {
+	public:
+		cords c1;
+		cords c2;
+		std::string originalText;
+		std::string text;
+		int index = 0;
 
+		movingText(cords, cords, std::string);
+		void render();
+		void update();
+	};
+
+	class slider {
+	public:
+		cords c1;
+		cords c2;
+		int progress = 0;
+
+		bool dragging = false;
+
+		std::function<void()> Action = NULL;
+
+		std::string pointer;
+		std::string ch;
+
+		slider(cords,cords, std::string, std::string);
+
+		void setAction(std::function<void()>);
+
+		void update();
+		void draw(int);
+	};
 
 	class Animation;
 	class UIManager {
@@ -38,20 +70,22 @@ namespace dUI {
 		std::vector<std::shared_ptr<Button>> buttons;
 		std::vector<std::shared_ptr<Animable>> animables;
 		std::vector<std::shared_ptr<Animation>> animations;
+		std::vector<std::shared_ptr<slider>> sliders;
 
 		time_t lastFrame = 0;
 
 		//windows nwm
-		HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
 		INPUT_RECORD InputRecord;
 		DWORD Events;
 	public:
+		HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		static UIManager& Instance();
 		double frameTime = 0;
 		UIManager();
 		bool canClick = true;
 		void addButton(std::shared_ptr<Button>);
+		void addSlider(std::shared_ptr<slider>);
 		void addAnimables(std::shared_ptr<Animable>);
 		void addAnimation(std::shared_ptr<Animation>);
 		void print(cords, std::string);
