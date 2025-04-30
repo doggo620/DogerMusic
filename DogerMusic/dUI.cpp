@@ -48,6 +48,10 @@ void dUI::UIManager::addAnimation(std::shared_ptr<dUI::Animation> animation) {
 	animations.push_back(animation);
 }
 
+void dUI::UIManager::addMoving(std::shared_ptr<movingText> cc){
+	movings.push_back(cc);
+}
+
 void dUI::UIManager::print(dUI::cords cd, std::string text) {
 	SetConsoleCursorPosition(hStdout, { (SHORT)cd.x, (SHORT)cd.y });
 	std::cout << text;
@@ -142,6 +146,10 @@ void dUI::UIManager::events(){
 	}
 }
 
+void dUI::UIManager::clear(){
+	system("cls");
+}
+
 
 
 dUI::cords dUI::UIManager::getSize(){
@@ -187,9 +195,33 @@ void dUI::UIManager::render(){
 			print(button->cords, button->text);
 		}
 	}
-	//std::cout.flush();
 
+	if (frame %5 == 0) {
+		for (auto& movable : movings) {
+			movable->render();
+		}
+	}
+
+	//std::cout.flush();
+	frame = (frame + 1) % 60;
 	time(&lastFrame);
+}
+
+void dUI::UIManager::waitForInput(){
+	ReadConsoleInput(hin, &InputRecord, 1, &Events);
+}
+
+void dUI::UIManager::fixInput(){
+	SetConsoleOutputCP(CP_UTF8);
+	DWORD mode = 0;
+	mode &= ~(ENABLE_QUICK_EDIT_MODE | ENABLE_LINE_INPUT);
+	mode |= ENABLE_EXTENDED_FLAGS;
+	mode |= ENABLE_MOUSE_INPUT;
+	mode |= ENABLE_WINDOW_INPUT;
+	bool ConsoleModeBool = SetConsoleMode(hin, mode);
+	if (!ConsoleModeBool) {
+		std::cerr << "Error setting console mode: " << GetLastError() << std::endl;
+	}
 }
 
 dUI::slider::slider(cords cc1, cords cc2, std::string poi, std::string cha){
@@ -253,9 +285,14 @@ void dUI::slider::draw(int newPosX){
 dUI::movingText::movingText(cords cc, cords ccc, std::string tx){
 	c1 = cc;
 	c2 = ccc;
-	originalText = tx;
+	lenght = (int)tx.length();
+	originalText = tx + tx.substr(0, c2.x - c1.x);
+	text = originalText.substr(0, c2.x - c1.x);
 }
 
 void dUI::movingText::render(){
-	dUI::UIManager::Instance().print(c1, text);
+	auto ins = dUI::UIManager::Instance();
+	text = originalText.substr(index, c2.x - c1.x);
+	index = (index + 1) % lenght;
+	ins.print(c1, text);
 }

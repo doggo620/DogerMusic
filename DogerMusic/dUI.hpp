@@ -36,11 +36,11 @@ namespace dUI {
 		cords c2;
 		std::string originalText;
 		std::string text;
+		int lenght;
 		int index = 0;
 
 		movingText(cords, cords, std::string);
 		void render();
-		void update();
 	};
 
 	class slider {
@@ -71,6 +71,7 @@ namespace dUI {
 		std::vector<std::shared_ptr<Animable>> animables;
 		std::vector<std::shared_ptr<Animation>> animations;
 		std::vector<std::shared_ptr<slider>> sliders;
+		std::vector<std::shared_ptr<movingText>> movings;
 
 		time_t lastFrame = 0;
 
@@ -79,6 +80,7 @@ namespace dUI {
 		INPUT_RECORD InputRecord;
 		DWORD Events;
 	public:
+		int frame = 0;
 		HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		static UIManager& Instance();
 		double frameTime = 0;
@@ -88,11 +90,15 @@ namespace dUI {
 		void addSlider(std::shared_ptr<slider>);
 		void addAnimables(std::shared_ptr<Animable>);
 		void addAnimation(std::shared_ptr<Animation>);
+		void addMoving(std::shared_ptr<movingText>);
 		void print(cords, std::string);
 		void divide(cords, cords, std::string);
 		void setTitle(LPCSTR);
 		void events();
+		void clear();
 		void render();
+		void waitForInput();
+		void fixInput();
 		cords getSize();
 	};
 }
