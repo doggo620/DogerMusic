@@ -2,7 +2,7 @@
 
 **PinkMusic** is a minimalist, console-based FLAC music player with a custom user interface built on the Windows Console API. It supports playlist management, interactive UI elements (like sliders, buttons, and menus), and a responsive event-driven system using SFML for audio playback.
 
-![Screenshoot](screen.png)
+![Screenshoot](Screen.png)
 
 ---
 
